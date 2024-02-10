@@ -1,0 +1,25 @@
+{
+  "blog": [
+    "https://feeds.feedburner.com/kdnuggets-data-mining-analytics",
+    "https://karpathy.github.io/feed.xml",
+    "https://daily.tinyprojects.dev",
+    "https://github.blog/feed/",
+    "https://medium.com/feed/google-cloud"
+  ],
+  "finance": [
+    "https://feeds.bloomberg.com/markets/news.rss",
+    "https://www.ft.com/markets?format=rss",
+    "http://www.forbes.com/markets/feed/",
+    "https://www.economist.com/finance-and-economics/rss.xml"
+  ],
+  "news": [
+    "https://www.cnet.com/rss/news/",
+    "http://feeds.wired.com/wired/index",
+    "http://feeds.guardian.co.uk/theguardian/world/rss",
+    "https://www.youtube.com/feeds/videos.xml?channel_id=UC_gUM8rL-Lrg6O3adPW9K1g"
+  ],
+  "science": [
+    "http://newsoffice.mit.edu/rss/topic/computers",
+    "http://rss.sciencedirect.com/publication/science/03050548"
+  ]
+}

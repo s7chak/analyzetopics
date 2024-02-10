@@ -1,0 +1,15 @@
+functions-framework==3.*
+pandas
+bs4
+lxml
+genesis
+#spacy
+nltk
+requests
+matplotlib
+wordcloud
+google-cloud-storage
+fsspec
+gcsfs
+appengine-python-standard>=1.0.0
+fastapi

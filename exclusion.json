@@ -1,0 +1,10 @@
+{
+  "blog": [
+    "model", "data", "data science", "science", "using", "photo", "image", "author", "updated", "python", "computer",
+    "dataframes", "dataframe", "science", "artificial", "intelligence", "world", "machine", "learning", "ml",
+    "google", "research", "task", "help", "free", "courses"
+  ],
+  "finance": ["money", "stock"],
+  "science": ["science", "new"],
+  "news": ["news", "say", "cnet", "best", "new"]
+}
