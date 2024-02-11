@@ -54,12 +54,13 @@ def analyze_stories():
 def email_test():
     try:
         projectid = 'topicverse'
-        sender_address = f"summary@[{projectid}].appspotmail.com"
+        # sender_address = f"summary@[{projectid}].appspotmail.com"
+        sender_address = f"subhayuchakr@gmail.com"
         message = mail.EmailMessage(
             sender=sender_address,
             subject="Test Email")
 
-        message.to = "Subh <subhayuchakr@gmail.com>"
+        message.to = "subhayuchakr@gmail.com"
         message.body = """
         Test email.
         """
