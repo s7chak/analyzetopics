@@ -70,11 +70,11 @@ def read_files(bucket_name, type_):
         file_date_str = file_name.split('.')[0]
         try:
             file_date = dt.strptime(file_date_str, '%Y%m%d')
+            if one_month_ago <= file_date <= current_date:
+                relevant_files.append(file_name)
+                print(file_name)
         except:
             print('File does not match date pattern: ', file_date_str)
-        if one_month_ago <= file_date <= current_date:
-            relevant_files.append(file_name)
-            print(file_name)
 
     return relevant_files
 
