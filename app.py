@@ -23,7 +23,7 @@ with open(json_file_path, 'r') as json_file:
     exc_map = json.load(json_file)
     print('~~~Exclusions loaded~~~')
 
-@app.route('/analyzestories')
+@app.route('/analyzestories', methods=['POST','GET'])
 def analyze_stories():
     # request_data = request.get_json()
     # story_type = request_data.get('type').lower()
