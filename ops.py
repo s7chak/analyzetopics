@@ -21,7 +21,7 @@ from email.mime.image import MIMEImage
 import smtplib
 # nltk.download('punkt')
 # nltk.download('stopwords')
-today_date = dt.today().strftime('%Y%m%d')
+today_date = dt.today().strftime('%m-%d-%Y')
 
 def analyze_stories(types, bucket_name):
     result = {}
