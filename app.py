@@ -28,13 +28,14 @@ with open(json_file_path, 'r') as json_file:
 
 @app.route('/analyzestories', methods=['POST'])
 def analyze_stories():
-    print("Starting weekly story analyze...", types)
+    print("Starting weekly story analyze...")
     start_time = time.time()
     request_data = request.get_json()
     story_type = request_data.get('type').lower()
     # daterange = request_data.get('daterange').lower() if 'daterange' in request_data else None
     # story_type='all'
     types = list(sources.keys()) if 'all' in story_type else story_type
+    print("Analyzing stories: ", types)
     try:
         result = ops.analyze_stories(types, bucket_name)
         files = {typ: result[typ]['files'] for typ in types if typ in result}
