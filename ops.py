@@ -19,6 +19,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 import smtplib
+import logging
 # nltk.download('punkt')
 # nltk.download('stopwords')
 today_date = dt.today().strftime('%m-%d-%Y')
@@ -65,21 +66,22 @@ def read_files(bucket_name, type_):
     blobs = client.list_blobs(bucket_name, prefix=f'{type_}/')
     relevant_files = []
     dfs = []
-    print('Blobs:',len(blobs))
+    logging.info('Blobs:',len(blobs))
     for blob in blobs:
-        print(blob.name)
+        logging.info(blob.name)
         file_name = blob.name.split('/')[-1]
         file_date_str = file_name.split('.')[0]
         try:
             file_date = dt.strptime(file_date_str, '%Y%m%d')
             if one_month_ago <= file_date <= current_date:
                 relevant_files.append(file_name)
-                print(file_name)
+                logging.info(file_name)
                 file_data = blob.download_as_string()
                 df_ = pd.read_csv(io.BytesIO(file_data))
                 dfs.append(df_)
         except:
             print('File read error: ', file_date_str, type_,str(sys.exc_info()))
+            logging.error('File read error: ', file_date_str, type_,str(sys.exc_info()))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
     return df, relevant_files
 
