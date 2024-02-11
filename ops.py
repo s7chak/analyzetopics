@@ -104,11 +104,13 @@ def create_email_body(result):
 
 
 def email_weekly_report(result):
+    if result=={} or len(result.keys())==0:
+        return 0
     sender_email = 'subhayuchakr@gmail.com'
     recipient_email = 'subhayuchakr@gmail.com'
-    password = os.environ.get('EMAIL_PASSWORD')
+    ps_ = os.environ.get('EMAIL_PASSWORD')
 
-    if not (sender_email and recipient_email and password):
+    if not (sender_email and recipient_email and ps_):
         raise ValueError("Email credentials are not configured.")
 
     try:
@@ -119,7 +121,7 @@ def email_weekly_report(result):
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
-        server.login(sender_email, password)
+        server.login(sender_email, ps_)
         server.sendmail(sender_email, recipient_email, message.as_string())
         server.quit()
 
