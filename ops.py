@@ -27,6 +27,7 @@ today_date = dt.today().strftime('%m-%d-%Y')
 def analyze_stories(types, bucket_name):
     result = {}
     for typ in types:
+        print('Reading files for type:'+typ)
         data, files = read_files(bucket_name, typ)
         # data, files = read_local_files(typ) # local
         if data is not None and not data.empty:

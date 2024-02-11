@@ -30,7 +30,7 @@ with open(json_file_path, 'r') as json_file:
 
 @app.route('/analyzestories', methods=['POST'])
 def analyze_stories():
-    print("Starting weekly story analyze...")
+    logging.info("Starting weekly story analyze...")
     start_time = time.time()
     request_data = request.get_json()
     story_type = request_data.get('type').lower()
