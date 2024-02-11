@@ -81,16 +81,18 @@ def read_files(bucket_name, type_):
 
 
 def create_email_body(result):
+    print('Building report')
+    print(str(result))
     # Create a MIME multipart message
     msg = MIMEMultipart()
     msg.attach(MIMEText(f"Weekly Report - {today_date} \n\n", 'plain'))
     for typ, data in result.items():
-        msg.attach(MIMEText(f"Type: {typ}\n\n", 'plain'))
+        msg.attach(MIMEText(f"Category: {typ}\n\n", 'plain'))
         wordcloud_img = MIMEImage(data['wc'])
         wordcloud_img.add_header('Content-Disposition', 'attachment', filename=f'{typ}_wordcloud.png')
         msg.attach(wordcloud_img)
-        # top_20_words = MIMEText(f"Top 20 words: {data['top']}\n\n", 'plain')
-        # msg.attach(top_20_words)
+        top_20_words = MIMEText(f"Top 20 words: {data['top']}\n\n", 'plain')
+        msg.attach(top_20_words)
         # lda_html = MIMEText(data['lda'], 'html')
         # msg.attach(lda_html)
 
@@ -111,7 +113,7 @@ def email_weekly_report(result):
         message = create_email_body(result)
         message['From'] = sender_email
         message['To'] = recipient_email
-        message['Subject'] = "Topicverse Snapshot"
+        message['Subject'] = f'Topicverse Snapshot: {today_date}'
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
