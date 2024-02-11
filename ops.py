@@ -109,7 +109,7 @@ def email_weekly_report(result):
     if result=={} or len(result.keys())==0:
         return 0
     sender_email = 'subhayuchakr@gmail.com'
-    recipient_email = 'subhayuchakr@gmail.com'
+    recipient_email = os.environ.get('EMAIL_TO')
     ps_ = os.environ.get('EMAIL_PASSWORD')
 
     if not (sender_email and recipient_email and ps_):

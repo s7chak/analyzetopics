@@ -8,6 +8,9 @@ import ops
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import google.cloud.logging
+client = google.cloud.logging.Client()
+client.setup_logging()
 
 # app = create_app()
 app = Flask(__name__)
@@ -25,6 +28,7 @@ with open(json_file_path, 'r') as json_file:
 #     exc_map = json.load(json_file)
 #     print('~~~Exclusions loaded~~~')
 
+logging.warning("App Start Logged.")
 
 @app.route('/analyzestories', methods=['POST'])
 def analyze_stories():
