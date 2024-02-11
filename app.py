@@ -69,7 +69,7 @@ def email_test():
     return jsonify({'API':"Topicverse", 'call': "emailtest:", "status": 'Complete'})
 
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST', 'GET'])
 def test():
     print('Reached API test')
     return jsonify({"API":"Topicverse", "Version": '1.0'})
