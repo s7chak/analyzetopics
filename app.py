@@ -36,7 +36,7 @@ def analyze_stories():
     story_type = request_data.get('type').lower()
     # daterange = request_data.get('daterange').lower() if 'daterange' in request_data else None
     # story_type='all'
-    types = list(sources.keys()) if 'all' in story_type else story_type
+    types = list(sources.keys()) if 'all' in story_type else [story_type]
     print("Analyzing stories: " + str(types))
     try:
         result = ops.analyze_stories(types, bucket_name)
