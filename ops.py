@@ -68,7 +68,10 @@ def read_files(bucket_name, type_):
     for blob in blobs:
         file_name = blob.name.split('/')[-1]
         file_date_str = file_name.split('.')[0]
-        file_date = dt.strptime(file_date_str, '%Y%m%d')
+        try:
+            file_date = dt.strptime(file_date_str, '%Y%m%d')
+        except:
+            print('File does not match date pattern: ', file_date_str)
         if one_month_ago <= file_date <= current_date:
             relevant_files.append(file_name)
             print(file_name)
@@ -110,7 +113,7 @@ def email_weekly_report(result):
         message = create_email_body(result)
         message['From'] = sender_email
         message['To'] = recipient_email
-        message['Subject'] = "Test Email"
+        message['Subject'] = "Topicverse Snapshot"
 
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
