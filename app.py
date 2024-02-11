@@ -37,13 +37,13 @@ def analyze_stories():
     # daterange = request_data.get('daterange').lower() if 'daterange' in request_data else None
     # story_type='all'
     types = list(sources.keys()) if 'all' in story_type else story_type
-    logging.info("Analyzing stories: "+types)
+    logging.info("Analyzing stories: " + ",".join(types))
     try:
         result = ops.analyze_stories(types, bucket_name)
         files = {typ: result[typ]['files'] for typ in types if typ in result}
         st = ops.email_weekly_report(result)
     except:
-        print(str(sys.exc_info()))
+        logging.error(str(sys.exc_info()))
         return jsonify({'API': "Topicverse", 'call': "analyzestories:" + str(types), "status": 'Failure'})
     end_time = time.time()
     elapsed_time = end_time - start_time
