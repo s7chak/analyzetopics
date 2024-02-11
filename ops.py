@@ -66,7 +66,7 @@ def read_files(bucket_name, type_):
     blobs = client.list_blobs(bucket_name, prefix=f'{type_}/')
     relevant_files = []
     dfs = []
-    logging.info('Blobs:',len(blobs))
+    logging.info('Blobs:', len(list(blobs)))
     for blob in blobs:
         logging.info(blob.name)
         file_name = blob.name.split('/')[-1]
