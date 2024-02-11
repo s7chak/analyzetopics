@@ -50,7 +50,7 @@ def analyze_stories():
 
 
 
-@app.route('/emailtest', methods=['POST'])
+@app.route('/emailtest', methods=['POST','GET'])
 def email_test():
     try:
         projectid = 'topicverse'
