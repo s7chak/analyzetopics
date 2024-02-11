@@ -39,14 +39,14 @@ def analyze_stories():
     try:
         result = ops.analyze_stories(types, bucket_name)
         files = {typ: result[typ]['files'] for typ in types if typ in result}
-        ops.email_weekly_report(result)
+        st = ops.email_weekly_report(result)
     except:
         print(str(sys.exc_info()))
         return jsonify({'API': "Topicverse", 'call': "analyzestories:" + str(types), "status": 'Failure'})
     end_time = time.time()
     elapsed_time = end_time - start_time
     total_elapsed_time = end_time - func_start_time
-    print(f"Weekly Story Analyze Time: {elapsed_time} seconds")
+    print(f"Weekly Story Analyze Time: {elapsed_time} seconds: ", st)
     print(f"Run Time: {total_elapsed_time} seconds")
     print(f"Story Analysis ended for type: ", str(types))
     return jsonify({'API':"Topicverse", 'call': "analyzestories: "+str(types), "files": files, "status": 'Complete'})

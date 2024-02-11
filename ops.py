@@ -127,6 +127,7 @@ def email_weekly_report(result):
 
     except Exception as e:
         print('Email sending failed: ', str(e))
+        return 0
 
     return 1
 
