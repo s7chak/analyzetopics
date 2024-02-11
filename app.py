@@ -5,7 +5,6 @@ import os
 from flask import Flask, request, jsonify, json
 import ops
 
-from google.appengine.api import mail
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -17,7 +16,7 @@ app = Flask(__name__)
 
 bucket_name = 'a-storyverse'
 func_start_time = time.time()
-today_date = datetime.today().strftime('%Y%m%d')
+
 json_file_path='sources.json'
 with open(json_file_path, 'r') as json_file:
     sources = json.load(json_file)
@@ -39,7 +38,7 @@ def analyze_stories():
     try:
         result = ops.analyze_stories(types, bucket_name)
         files = {typ: result[typ]['files'] for typ in types if typ in result}
-        ops.email_out(result)
+        ops.email_weekly_report(result)
     except:
         print(str(sys.exc_info()))
         return jsonify({'API': "Topicverse", 'call': "analyzestories:" + str(types), "status": 'Failure'})

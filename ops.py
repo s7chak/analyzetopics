@@ -15,17 +15,19 @@ import pandas as pd
 # from nltk import word_tokenize, WordNetLemmatizer
 # from nltk.corpus import stopwords
 from wordcloud import WordCloud
-from google.appengine.api import mail
-
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
+import smtplib
 # nltk.download('punkt')
 # nltk.download('stopwords')
-
+today_date = dt.today().strftime('%Y%m%d')
 
 def analyze_stories(types, bucket_name):
     result = {}
     for typ in types:
-        # data, files = read_files(bucket_name, typ)
-        data, files = read_local_files(typ) # local
+        data, files = read_files(bucket_name, typ)
+        # data, files = read_local_files(typ) # local
         if data is not None and not data.empty:
             wc, top, lda = topic_checks(data, 'Combined_Text')  # local
             result[typ]={}
@@ -55,23 +57,73 @@ def read_local_files(type_):
     df = pd.concat(dfs, axis=0) if len(dfs) else None
     return df, relevant_files
 
-# from google.cloud import storage
-# def read_files(bucket_name, type_):
-#     client = storage.Client()
-#     current_date = dt.utcnow()
-#     one_month_ago = current_date - timedelta(days=30)
-#     blobs = client.list_blobs(bucket_name, prefix=f'{type_}/')
-#     relevant_files = []
-#
-#     for blob in blobs:
-#         file_name = blob.name.split('/')[-1]
-#         file_date_str = file_name.split('.')[0]
-#         file_date = dt.strptime(file_date_str, '%Y%m%d')
-#         if one_month_ago <= file_date <= current_date:
-#             relevant_files.append(file_name)
-#             print(file_name)
-#
-#     return relevant_files
+from google.cloud import storage
+def read_files(bucket_name, type_):
+    client = storage.Client()
+    current_date = dt.utcnow()
+    one_month_ago = current_date - timedelta(days=30)
+    blobs = client.list_blobs(bucket_name, prefix=f'{type_}/')
+    relevant_files = []
+
+    for blob in blobs:
+        file_name = blob.name.split('/')[-1]
+        file_date_str = file_name.split('.')[0]
+        file_date = dt.strptime(file_date_str, '%Y%m%d')
+        if one_month_ago <= file_date <= current_date:
+            relevant_files.append(file_name)
+            print(file_name)
+
+    return relevant_files
+
+
+def create_email_body(result):
+    # Create a MIME multipart message
+    msg = MIMEMultipart()
+    msg.attach(MIMEText(f"Weekly Report - {today_date} \n\n", 'plain'))
+    for typ, data in result.items():
+        msg.attach(MIMEText(f"Type: {typ}\n\n", 'plain'))
+        wordcloud_img = MIMEImage(data['wc'])
+        wordcloud_img.add_header('Content-Disposition', 'attachment', filename=f'{typ}_wordcloud.png')
+        msg.attach(wordcloud_img)
+        # top_20_words = MIMEText(f"Top 20 words: {data['top']}\n\n", 'plain')
+        # msg.attach(top_20_words)
+        # lda_html = MIMEText(data['lda'], 'html')
+        # msg.attach(lda_html)
+
+        msg.attach(MIMEText("\n\n---\n\n", 'plain'))
+
+    # Convert the message to a string
+    email_body = msg.as_string()
+
+    return email_body
+
+
+def email_weekly_report(result):
+    sender_email = 'subhayuchakr@gmail.com'
+    recipient_email = 'subhayuchakr@gmail.com'
+    password = os.environ.get('EMAIL_PASSWORD')
+
+    if not (sender_email and recipient_email and password):
+        raise ValueError("Email credentials are not configured.")
+
+    try:
+        message = create_email_body(result)
+        message['From'] = sender_email
+        message['To'] = recipient_email
+        message['Subject'] = "Test Email"
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, recipient_email, message.as_string())
+        server.quit()
+
+    except Exception as e:
+        print('Email sending failed: ', str(e))
+
+    return 1
+
+
 
 
 def email_out(result):
