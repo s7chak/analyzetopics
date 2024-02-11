@@ -83,4 +83,4 @@ def params():
     return jsonify({"API":"Topicverse", "Version": '1.0'})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8091)
+    app.run(host='0.0.0.0', port=8080)
