@@ -80,7 +80,7 @@ def read_files(bucket_name, type_):
                 dfs.append(df_)
         except:
             print('File read error: ', file_date_str, type_,str(sys.exc_info()))
-            logging.error('File read error: ', file_date_str, type_,str(sys.exc_info()))
+            logging.error('File read error: ' +file_date_str + type_ + '\n' +str(sys.exc_info()))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
     return df, relevant_files
 
