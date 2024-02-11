@@ -20,6 +20,7 @@ from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 import smtplib
 import logging
+import io
 # nltk.download('punkt')
 # nltk.download('stopwords')
 today_date = dt.today().strftime('%m-%d-%Y')
@@ -58,6 +59,25 @@ def read_local_files(type_):
             dfs.append(pd.read_csv(file_path))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
     return df, relevant_files
+
+
+def df_to_gcp_csv(df, dest_bucket_name, dest_file_name):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(dest_bucket_name)
+    blob = bucket.blob(dest_file_name)
+    blob.upload_from_string(df.to_csv(), 'text/csv')
+    print(f'DataFrame uploaded to bucket {dest_bucket_name}, file name: {dest_file_name}')
+
+
+def gcp_csv_to_df(bucket_name, source_file_name):
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(source_blob_name)
+    data = blob.download_as_bytes()
+    df = pd.read_csv(io.BytesIO(data))
+    print(f'Pulled down file from bucket {bucket_name}, file name: {source_file_name}')
+    return df
+
 
 from google.cloud import storage
 def read_files(bucket_name, type_):
