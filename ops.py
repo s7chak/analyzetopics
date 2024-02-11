@@ -73,9 +73,11 @@ def read_files(bucket_name, type_):
             if one_month_ago <= file_date <= current_date:
                 relevant_files.append(file_name)
                 print(file_name)
-                dfs.append(pd.read_csv(file_name))
+                file_data = blob.download_as_string()
+                df_ = pd.read_csv(io.BytesIO(file_data))
+                dfs.append(df_)
         except:
-            print('File does not match date pattern: ', file_date_str, type_,str(sys.exc_info()))
+            print('File read error: ', file_date_str, type_,str(sys.exc_info()))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
     return df, relevant_files
 
