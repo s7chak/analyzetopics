@@ -6,6 +6,9 @@ from flask import Flask, request, jsonify, json
 import ops
 
 from google.appengine.api import mail
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 # app = create_app()
 app = Flask(__name__)
@@ -53,21 +56,31 @@ def analyze_stories():
 @app.route('/emailtest', methods=['POST','GET'])
 def email_test():
     try:
-        projectid = 'topicverse'
-        # sender_address = f"summary@[{projectid}].appspotmail.com"
-        sender_address = f"subhayuchakr@gmail.com"
-        message = mail.EmailMessage(
-            sender=sender_address,
-            subject="Test Email")
+        sender_email = 'subhayuchakr@gmail.com'
+        recipient_email = 'subhayuchakr@gmail.com'
+        password = os.environ.get('EMAIL_PASSWORD')
 
-        message.to = "subhayuchakr@gmail.com"
-        message.body = """
-        Test email.
-        """
-        message.send()
-    except:
-        print('Email failed: ', str(sys.exc_info()))
+        if not (sender_email and recipient_email and password):
+            raise ValueError("Email credentials are not configured.")
+
+        message = MIMEMultipart()
+        message['From'] = sender_email
+        message['To'] = recipient_email
+        message['Subject'] = "Test Email"
+
+        body = "Test email."
+        message.attach(MIMEText(body, 'plain'))
+
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, password)
+        server.sendmail(sender_email, recipient_email, message.as_string())
+        server.quit()
+
+    except Exception as e:
+        print('Email failed: ', str(e))
         return jsonify({'API':"Topicverse", 'call': "emailtest:", "status": 'Failure'})
+
     print('Email sent')
     return jsonify({'API':"Topicverse", 'call': "emailtest:", "status": 'Complete'})
 
