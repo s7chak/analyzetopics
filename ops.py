@@ -75,7 +75,7 @@ def read_files(bucket_name, type_):
                 print(file_name)
                 dfs.append(pd.read_csv(file_name))
         except:
-            print('File does not match date pattern: ', file_date_str, str(sys.exc_info()))
+            print('File does not match date pattern: ', file_date_str, type_,str(sys.exc_info()))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
     return df, relevant_files
 
@@ -96,10 +96,7 @@ def create_email_body(result):
 
         msg.attach(MIMEText("\n\n---\n\n", 'plain'))
 
-    # Convert the message to a string
-    email_body = msg.as_string()
-
-    return email_body
+    return msg
 
 
 def email_weekly_report(result):
@@ -150,11 +147,6 @@ def email_out(result):
         return 'Email failed: '+str(sys.exc_info())
     print('Email sent')
     return 'Email sent'
-
-
-def make_mail_report(result):
-    print(result)
-    return 0
 
 
 
