@@ -64,7 +64,7 @@ def read_files(bucket_name, type_):
     one_month_ago = current_date - timedelta(days=30)
     blobs = client.list_blobs(bucket_name, prefix=f'{type_}/')
     relevant_files = []
-
+    dfs = []
     for blob in blobs:
         file_name = blob.name.split('/')[-1]
         file_date_str = file_name.split('.')[0]
@@ -73,10 +73,11 @@ def read_files(bucket_name, type_):
             if one_month_ago <= file_date <= current_date:
                 relevant_files.append(file_name)
                 print(file_name)
+                dfs.append(pd.read_csv(file_name))
         except:
-            print('File does not match date pattern: ', file_date_str)
-
-    return relevant_files
+            print('File does not match date pattern: ', file_date_str, str(sys.exc_info()))
+    df = pd.concat(dfs, axis=0) if len(dfs) else None
+    return df, relevant_files
 
 
 def create_email_body(result):
