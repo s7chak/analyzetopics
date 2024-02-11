@@ -11,6 +11,4 @@ wordcloud
 google-cloud-storage
 google-cloud-logging
 fsspec
-gcsfs
-appengine-python-standard>=1.0.0
 fastapi
