@@ -66,18 +66,17 @@ def read_files(bucket_name, type_):
     blobs = client.list_blobs(bucket_name, prefix=f'{type_}/')
     relevant_files = []
     dfs = []
-    logging.info('Blobs:', len(list(blobs)))
     for blob in blobs:
         logging.info(blob.name)
         file_name = blob.name.split('/')[-1]
         file_date_str = file_name.split('.')[0]
+        logging.info(file_name)
         try:
             file_date = dt.strptime(file_date_str, '%Y%m%d')
             if one_month_ago <= file_date <= current_date:
                 relevant_files.append(file_name)
-                logging.info(file_name)
-                file_data = blob.download_as_string()
-                df_ = pd.read_csv(io.BytesIO(file_data))
+                file_data = blob.download_as_bytes()
+                df_ = pd.read_csv(file_data)
                 dfs.append(df_)
         except:
             print('File read error: ', file_date_str, type_,str(sys.exc_info()))
