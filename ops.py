@@ -65,7 +65,9 @@ def read_files(bucket_name, type_):
     blobs = client.list_blobs(bucket_name, prefix=f'{type_}/')
     relevant_files = []
     dfs = []
+    print('Blobs:',len(blobs))
     for blob in blobs:
+        print(blob.name)
         file_name = blob.name.split('/')[-1]
         file_date_str = file_name.split('.')[0]
         try:
