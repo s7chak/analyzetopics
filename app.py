@@ -19,16 +19,17 @@ json_file_path='sources.json'
 with open(json_file_path, 'r') as json_file:
     sources = json.load(json_file)
     print('~~~Sources loaded~~~')
-with open(json_file_path, 'r') as json_file:
-    exc_map = json.load(json_file)
-    print('~~~Exclusions loaded~~~')
+# with open(json_file_path, 'r') as json_file:
+#     exc_map = json.load(json_file)
+#     print('~~~Exclusions loaded~~~')
 
-@app.route('/analyzestories', methods=['POST','GET'])
+
+@app.route('/analyzestories', methods=['POST'])
 def analyze_stories():
-    # request_data = request.get_json()
-    # story_type = request_data.get('type').lower()
+    request_data = request.get_json()
+    story_type = request_data.get('type').lower()
     # daterange = request_data.get('daterange').lower() if 'daterange' in request_data else None
-    story_type='all'
+    # story_type='all'
     types = list(sources.keys()) if 'all' in story_type else story_type
     print("Starting weekly story analyze...", types)
     start_time = time.time()
@@ -46,6 +47,7 @@ def analyze_stories():
     print(f"Run Time: {total_elapsed_time} seconds")
     print(f"Story Analysis ended for type: ", str(types))
     return jsonify({'API':"Topicverse", 'call': "analyzestories: "+str(types), "files": files, "status": 'Complete'})
+
 
 
 @app.route('/emailtest', methods=['POST'])
