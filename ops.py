@@ -102,6 +102,7 @@ def read_files(bucket_name, type_):
                 dfs.append(df_)
         except:
             print('File read error: ', file_date_str, type_,str(sys.exc_info()))
+            continue
             # logging.error('File read error: ' +file_date_str + type_ + '\n' +str(sys.exc_info()))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
     return df, relevant_files
@@ -111,29 +112,24 @@ def create_email_body(result):
     print('Building report')
     # Create a MIME multipart message
     msg = MIMEMultipart()
-    html_content = f'<h1>Weekly Topicverse : {today_date}</h1>'
+    html_content = f'''<h1>Weekly Topicverse</h1>
+                        <h2>{today_date}</h2>'''
     msg.attach(MIMEText(html_content, 'html'))
     for typ, data in result.items():
-        msg.attach(MIMEText(f"Category: {typ}\n\n", 'plain'))
         wordcloud_img = MIMEImage(data['wc'])
         wordcloud_img.add_header('Content-ID', f'<{typ}_wordcloud>')
         wordcloud_img.add_header('Content-Disposition', 'inline', filename=f'{typ}_wordcloud.png')
         msg.attach(wordcloud_img)
 
-        top20 = ",".join([k for k in data['top']]) if 'top' in data else ""
-        top_20_words = MIMEText(f"Top 20 words: {top20}\n\n", 'plain')
-        msg.attach(top_20_words)
-
         html_content = f'''
-        <html>
-        <body>
         <h2>{typ}</h2>
         <img src="cid:{typ}_wordcloud">
-        </body>
-        </html>
         '''
         msg.attach(MIMEText(html_content, 'html'))
-        
+
+        top20 = ",".join([k for k in data['top']]) if 'top' in data else ""
+        top_20_words = MIMEText(f"<h3>Top 20 words: </h3><span>{top20}</span><br><br>", 'html')
+        msg.attach(top_20_words)
         # lda_html = MIMEText(data['lda'], 'html')
         # msg.attach(lda_html)
 
@@ -199,8 +195,7 @@ def email_out(result):
 
 
 def topic_checks(data, field):
-    df = copy.deepcopy(data)
-    wc = generate_wordcloud(df, field)
+    wc = generate_wordcloud(data, field)
     top_20_terms = find_top20words(df, field)
     # lda = do_lda_html(df)
     lda = None
@@ -208,23 +203,26 @@ def topic_checks(data, field):
 
 
 def generate_wordcloud(data, field):
+    df = copy.deepcopy(data)
     try:
-        data[field] = data[field].apply(ast.literal_eval)
+        df[field] = df[field].apply(ast.literal_eval)
     except:
         return None
-    text = ' '.join([term for sublist in data[field].tolist() for term in sublist])
+    text = ' '.join([term for sublist in df[field].tolist() for term in sublist])
     wordcloud = WordCloud(width=1200, height=900, background_color='white').generate(text)
     img_bytes_io = BytesIO()
     wordcloud.to_image().save(img_bytes_io, format='PNG')
     img_bytes = img_bytes_io.getvalue()
     return img_bytes
 
-def find_top20words(df, field):
+def find_top20words(data, field):
+    df = copy.deepcopy(data)
     try:
         df[field] = df[field].apply(ast.literal_eval)
     except:
         return {}
     all_terms = [term for sublist in df[field].tolist() for term in sublist]
+    print(all_terms[:10])
     term_counts = Counter(all_terms)
     top_20_terms = dict(sorted(term_counts.items(), key=lambda item: item[1], reverse=True)[:20])
     return top_20_terms
