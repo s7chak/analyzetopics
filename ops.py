@@ -137,7 +137,7 @@ def create_email_body(result):
             top20 = ",".join([k for k in data['top']]) if 'top' in data else ""
             top_20_words = MIMEText(f"<h3>Top 20 words: </h3><span>{top20}</span><br><br>", 'html')
             msg.attach(top_20_words)
-            
+
         # lda_html = MIMEText(data['lda'], 'html')
         # msg.attach(lda_html)
 
@@ -219,7 +219,7 @@ def generate_wordcloud(data, field):
                     else None
         df[field] = df[field].apply(ast.literal_eval)
     except:
-        print('No valid clean column for wordcloud.')
+        logging.error('No valid clean column for wordcloud.', str(df.columns))
         return None
     text = ' '.join([term for sublist in df[field].tolist() for term in sublist if term not in quickclean])
     wordcloud = WordCloud(width=1200, height=900, background_color='white').generate(text)
@@ -237,7 +237,7 @@ def find_top20words(data, field):
                 else None
         df[field] = df[field].apply(ast.literal_eval)
     except:
-        print('No valid clean column for top 20.')
+        logging.error('No valid clean column for top 20.', str(df.columns))
         return {}
     all_terms = [term for sublist in df[field].tolist() for term in sublist if term not in quickclean]
     term_counts = Counter(all_terms)
