@@ -35,7 +35,7 @@ def analyze_stories(types, bucket_name):
         # data, files = read_local_files(typ) # local
         if data is not None and not data.empty:
             try:
-                wc, top, lda = topic_checks(data, 'PText')  # local
+                wc, top, lda, size = topic_checks(data, 'PText')  # local
             except:
                 print('Error analysing type: ',typ, str(sys.exc_info()))
                 continue
@@ -44,6 +44,7 @@ def analyze_stories(types, bucket_name):
             result[typ]['files'] = files
             result[typ]['wc'] = wc
             result[typ]['top'] = top
+            result[typ]['size'] = size
             result[typ]['lda'] = lda if lda is not None else ''
     return result
 
@@ -112,6 +113,9 @@ def read_files(bucket_name, type_):
             continue
             # logging.error('File read error: ' +file_date_str + type_ + '\n' +str(sys.exc_info()))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
+    if any(['Processed' in x for x in df.columns]):
+        df['PText'] = df['PText'].fillna(df['Processed_Text'])
+
     return df, relevant_files
 
 
@@ -124,6 +128,7 @@ def create_email_body(result):
     msg.attach(MIMEText(html_content, 'html'))
     for typ, data in result.items():
         if 'wc' in data and data['wc'] is not None:
+            siz = str(data['size'])
             wordcloud_img = MIMEImage(data['wc'])
             wordcloud_img.add_header('Content-ID', f'<{typ}_wordcloud>')
             wordcloud_img.add_header('Content-Disposition', 'inline', filename=f'{typ}_wordcloud.png')
@@ -131,6 +136,7 @@ def create_email_body(result):
 
             html_content = f'''
             <h2>{typ}</h2>
+            <h2>Articles: {siz}</h2>
             <img src="cid:{typ}_wordcloud">
             '''
             msg.attach(MIMEText(html_content, 'html'))
@@ -209,7 +215,8 @@ def topic_checks(data, field):
     top_20_terms = find_top20words(data, field)
     # lda = do_lda_html(df)
     lda = None
-    return wc, top_20_terms, lda
+    size = data.shape[1]
+    return wc, top_20_terms, lda, size
 
 
 def generate_wordcloud(data, field):
