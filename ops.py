@@ -114,32 +114,30 @@ def create_email_body(result):
     msg.attach(MIMEText(f"Weekly Report - {today_date} \n\n", 'plain'))
     for typ, data in result.items():
         msg.attach(MIMEText(f"Category: {typ}\n\n", 'plain'))
-        
-        print('Attaching wordclouds')
+
+        wordcloud_img = MIMEImage(data['wc'])
+        wordcloud_img.add_header('Content-ID', f'<{typ}_wordcloud>')
+        wordcloud_img.add_header('Content-Disposition', 'inline', filename=f'{typ}_wordcloud.png')
+        msg.attach(wordcloud_img)
+
+        top20 = ",".join([k for k in data['top']]) if 'top' in data else ""
+        top_20_words = MIMEText(f"Top 20 words: {top20}\n\n", 'plain')
+        msg.attach(top_20_words)
+
         html_content = f'''
         <html>
         <body>
-        <h2>{type}</h2>
-        <img src="cid:wordcloud_image">
+        <h2>{typ}</h2>
+        <img src="cid:{typ}_wordcloud">
         </body>
         </html>
         '''
-        wordcloud_img = MIMEImage(data['wc'])
-        wordcloud_img.add_header('Content-ID', '<wordcloud_image>')
-        wordcloud_img.add_header('Content-Disposition', 'inline', filename=f'{typ}_wordcloud.png')
-        msg.attach(wordcloud_img)
         msg.attach(MIMEText(html_content, 'html'))
-        if len(list(data['top'].keys())) > 0:
-            top20 = ",".join([k for k in data['top']])
-            top_20_words = MIMEText(f"Top 20 words: {top20} \n\n", 'plain')
-            msg.attach(top_20_words)
-        else:
-            logging.error("Top 20 words not found")
         
         # lda_html = MIMEText(data['lda'], 'html')
         # msg.attach(lda_html)
 
-        msg.attach(MIMEText("\n\n---\n\n", 'plain'))
+        msg.attach(MIMEText("\n\n------------\n\n", 'plain'))
 
     print('Email message created.')
     return msg
