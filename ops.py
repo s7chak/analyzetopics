@@ -64,6 +64,8 @@ def read_local_files(type_):
             relevant_files.append(file_name)
             dfs.append(pd.read_csv(file_path))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
+    if any(['Processed' in x for x in df.columns]):
+        df['PText'] = df['PText'].fillna(df['Processed_Text'])
     return df, relevant_files
 
 
@@ -213,10 +215,6 @@ def topic_checks(data, field):
 def generate_wordcloud(data, field):
     df = copy.deepcopy(data)
     try:
-        if field not in df.columns:
-            field = 'Processed_Text' if 'Processed_Text' in df.columns \
-                    else 'Processed_Title' if 'Processed_Title' in df.columns \
-                    else None
         df[field] = df[field].apply(ast.literal_eval)
     except:
         logging.error('No valid clean column for wordcloud.', str(df.columns))
@@ -231,10 +229,6 @@ def generate_wordcloud(data, field):
 def find_top20words(data, field):
     df = copy.deepcopy(data)
     try:
-        if field not in df.columns:
-            field = 'Processed_Text' if 'Processed_Text' in df.columns \
-                else 'Processed_Title' if 'Processed_Title' in df.columns \
-                else None
         df[field] = df[field].apply(ast.literal_eval)
     except:
         logging.error('No valid clean column for top 20.', str(df.columns))
