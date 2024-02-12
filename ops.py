@@ -203,6 +203,7 @@ def email_out(result):
 def topic_checks(data, field):
     df = copy.deepcopy(data)
     clean_text = ' '.join([term for sublist in df[field].tolist() for term in sublist])
+    print(str(clean_text.split(' ')[:10]))
     wc = generate_wordcloud(clean_text)
     top_20_terms = find_top20words(df, field)
     # lda = do_lda_html(df)
