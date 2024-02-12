@@ -210,6 +210,8 @@ def topic_checks(data, field):
 def generate_wordcloud(data, field):
     df = copy.deepcopy(data)
     try:
+        if field not in df.columns and 'Processed_Text' in df.columns:
+            field = 'Processed_Text'
         df[field] = df[field].apply(ast.literal_eval)
     except:
         return None
@@ -223,6 +225,8 @@ def generate_wordcloud(data, field):
 def find_top20words(data, field):
     df = copy.deepcopy(data)
     try:
+        if field not in df.columns and 'Processed_Text' in df.columns:
+            field = 'Processed_Text'
         df[field] = df[field].apply(ast.literal_eval)
     except:
         return {}
