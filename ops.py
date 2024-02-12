@@ -210,10 +210,13 @@ def topic_checks(data, field):
 def generate_wordcloud(data, field):
     df = copy.deepcopy(data)
     try:
-        if field not in df.columns and 'Processed_Text' in df.columns:
-            field = 'Processed_Text'
+        if field not in df.columns:
+            field = 'Processed_Text' if 'Processed_Text' in df.columns \
+                    else 'Processed_Title' if 'Processed_Title' in df.columns \
+                    else None
         df[field] = df[field].apply(ast.literal_eval)
     except:
+        print('No valid clean column for wordcloud.')
         return None
     text = ' '.join([term for sublist in df[field].tolist() for term in sublist if term not in quickclean])
     wordcloud = WordCloud(width=1200, height=900, background_color='white').generate(text)
@@ -225,10 +228,13 @@ def generate_wordcloud(data, field):
 def find_top20words(data, field):
     df = copy.deepcopy(data)
     try:
-        if field not in df.columns and 'Processed_Text' in df.columns:
-            field = 'Processed_Text'
+        if field not in df.columns:
+            field = 'Processed_Text' if 'Processed_Text' in df.columns \
+                else 'Processed_Title' if 'Processed_Title' in df.columns \
+                else None
         df[field] = df[field].apply(ast.literal_eval)
     except:
+        print('No valid clean column for top 20.')
         return {}
     all_terms = [term for sublist in df[field].tolist() for term in sublist if term not in quickclean]
     term_counts = Counter(all_terms)
