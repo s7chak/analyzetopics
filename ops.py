@@ -33,7 +33,11 @@ def analyze_stories(types, bucket_name):
         data, files = read_files(bucket_name, typ)
         # data, files = read_local_files(typ) # local
         if data is not None and not data.empty:
-            wc, top, lda = topic_checks(data, 'PText')  # local
+            try:
+                wc, top, lda = topic_checks(data, 'PText')  # local
+            except:
+                print('Error analysing type: ',typ, str(sys.exc_info()))
+                continue
             result[typ]={}
             result[typ]['data'] = data
             result[typ]['files'] = files
@@ -196,7 +200,7 @@ def email_out(result):
 
 def topic_checks(data, field):
     wc = generate_wordcloud(data, field)
-    top_20_terms = find_top20words(df, field)
+    top_20_terms = find_top20words(data, field)
     # lda = do_lda_html(df)
     lda = None
     return wc, top_20_terms, lda
@@ -227,17 +231,6 @@ def find_top20words(data, field):
     top_20_terms = dict(sorted(term_counts.items(), key=lambda item: item[1], reverse=True)[:20])
     return top_20_terms
 
-def do_wordclouds(data, fields):
-    df = copy.deepcopy(data)
-    res = {'top20': {}, 'wc': {}}
-    for field in fields:
-        # Top20terms
-        top_20_terms = find_top20words(df, field)
-        clean_text = ' '.join([term for sublist in df[field].tolist() for term in sublist])
-        ttwc = generate_wordcloud(clean_text)
-        res['top20'][field] = top_20_terms
-        res['wc'][field] = ttwc
-    return res
 
 
 # def do_lda_html(data, field):
