@@ -1,26 +1,27 @@
 import ast
 import copy
 import glob
+import io
+import logging
 import os
+import pandas as pd
+import smtplib
+import sys
 from collections import Counter
 from datetime import datetime as dt
 from datetime import timedelta
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 # from pyLDAvis import gensim
 # from gensim.corpora import Dictionary
 # from gensim.models import LdaModel, CoherenceModel
 # import pyLDAvis
 from io import BytesIO
-import sys
-import pandas as pd
 # from nltk import word_tokenize, WordNetLemmatizer
 # from nltk.corpus import stopwords
 from wordcloud import WordCloud
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.image import MIMEImage
-import smtplib
-import logging
-import io
+
 # nltk.download('punkt')
 # nltk.download('stopwords')
 today_date = dt.today().strftime('%m-%d-%Y')
@@ -32,7 +33,7 @@ def analyze_stories(types, bucket_name):
         data, files = read_files(bucket_name, typ)
         # data, files = read_local_files(typ) # local
         if data is not None and not data.empty:
-            wc, top, lda = topic_checks(data, 'Combined_Text')  # local
+            wc, top, lda = topic_checks(data, 'PText')  # local
             result[typ]={}
             result[typ]['data'] = data
             result[typ]['files'] = files
@@ -88,7 +89,7 @@ def read_files(bucket_name, type_):
     relevant_files = []
     dfs = []
     for blob in blobs:
-        print(blob.name)
+        logging.info(blob.name)
         file_name = blob.name.split('/')[-1]
         file_date_str = file_name.split('.')[0]
         print(file_name)
