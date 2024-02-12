@@ -25,7 +25,7 @@ from wordcloud import WordCloud
 # nltk.download('punkt')
 # nltk.download('stopwords')
 today_date = dt.today().strftime('%m-%d-%Y')
-quickclean = ['you','will','say','said','are','has','cnet','new']
+quickclean = ['you','will','say','said','are','has','cnet','new','says','u','bloomberg','best']
 
 def analyze_stories(types, bucket_name):
     result = {}
