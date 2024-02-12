@@ -111,10 +111,10 @@ def create_email_body(result):
     print('Building report')
     # Create a MIME multipart message
     msg = MIMEMultipart()
-    msg.attach(MIMEText(f"Weekly Report - {today_date} \n\n", 'plain'))
+    html_content = f'<h1>Weekly Topicverse : {today_date}</h1>'
+    msg.attach(MIMEText(html_content, 'html'))
     for typ, data in result.items():
         msg.attach(MIMEText(f"Category: {typ}\n\n", 'plain'))
-
         wordcloud_img = MIMEImage(data['wc'])
         wordcloud_img.add_header('Content-ID', f'<{typ}_wordcloud>')
         wordcloud_img.add_header('Content-Disposition', 'inline', filename=f'{typ}_wordcloud.png')
@@ -207,12 +207,12 @@ def topic_checks(data, field):
     return wc, top_20_terms, lda
 
 
-def generate_wordcloud(df, field):
+def generate_wordcloud(data, field):
     try:
-        df[field] = df[field].apply(ast.literal_eval)
+        data[field] = data[field].apply(ast.literal_eval)
     except:
         return None
-    text = ' '.join([term for sublist in df[field].tolist() for term in sublist])
+    text = ' '.join([term for sublist in data[field].tolist() for term in sublist])
     wordcloud = WordCloud(width=1200, height=900, background_color='white').generate(text)
     img_bytes_io = BytesIO()
     wordcloud.to_image().save(img_bytes_io, format='PNG')
