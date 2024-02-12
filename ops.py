@@ -25,7 +25,7 @@ from wordcloud import WordCloud
 # nltk.download('punkt')
 # nltk.download('stopwords')
 today_date = dt.today().strftime('%m-%d-%Y')
-quickclean = ['you','will','say','said','are','has','cnet','new','says','u','bloomberg','best']
+quickclean = ['you','will','say','said','are','has','cnet','new','says','u','bloomberg','best', 'source']
 
 def analyze_stories(types, bucket_name):
     result = {}
@@ -121,24 +121,27 @@ def create_email_body(result):
                         <h2>{today_date}</h2>'''
     msg.attach(MIMEText(html_content, 'html'))
     for typ, data in result.items():
-        wordcloud_img = MIMEImage(data['wc'])
-        wordcloud_img.add_header('Content-ID', f'<{typ}_wordcloud>')
-        wordcloud_img.add_header('Content-Disposition', 'inline', filename=f'{typ}_wordcloud.png')
-        msg.attach(wordcloud_img)
+        if 'wc' in data and data['wc'] is not None:
+            wordcloud_img = MIMEImage(data['wc'])
+            wordcloud_img.add_header('Content-ID', f'<{typ}_wordcloud>')
+            wordcloud_img.add_header('Content-Disposition', 'inline', filename=f'{typ}_wordcloud.png')
+            msg.attach(wordcloud_img)
 
-        html_content = f'''
-        <h2>{typ}</h2>
-        <img src="cid:{typ}_wordcloud">
-        '''
-        msg.attach(MIMEText(html_content, 'html'))
+            html_content = f'''
+            <h2>{typ}</h2>
+            <img src="cid:{typ}_wordcloud">
+            '''
+            msg.attach(MIMEText(html_content, 'html'))
 
-        top20 = ",".join([k for k in data['top']]) if 'top' in data else ""
-        top_20_words = MIMEText(f"<h3>Top 20 words: </h3><span>{top20}</span><br><br>", 'html')
-        msg.attach(top_20_words)
+        if 'top' in data and data['top']!={}:
+            top20 = ",".join([k for k in data['top']]) if 'top' in data else ""
+            top_20_words = MIMEText(f"<h3>Top 20 words: </h3><span>{top20}</span><br><br>", 'html')
+            msg.attach(top_20_words)
+            
         # lda_html = MIMEText(data['lda'], 'html')
         # msg.attach(lda_html)
 
-        msg.attach(MIMEText("\n\n------------\n\n", 'plain'))
+        msg.attach(MIMEText("\n____________\n\n\n", 'plain'))
 
     print('Email message created.')
     return msg
