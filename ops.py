@@ -114,12 +114,28 @@ def create_email_body(result):
     msg.attach(MIMEText(f"Weekly Report - {today_date} \n\n", 'plain'))
     for typ, data in result.items():
         msg.attach(MIMEText(f"Category: {typ}\n\n", 'plain'))
+        
         print('Attaching wordclouds')
+        html_content = f'''
+        <html>
+        <body>
+        <h2>{type}</h2>
+        <img src="cid:wordcloud_image">
+        </body>
+        </html>
+        '''
+        msg.attach(MIMEText(html_content, 'html'))
         wordcloud_img = MIMEImage(data['wc'])
-        wordcloud_img.add_header('Content-Disposition', 'attachment', filename=f'{typ}_wordcloud.png')
+        wordcloud_img.add_header('Content-ID', '<wordcloud_image>')
+        wordcloud_img.add_header('Content-Disposition', 'inline', filename=f'{typ}_wordcloud.png')
         msg.attach(wordcloud_img)
-        top_20_words = MIMEText(f"Top 20 words: {data['top']}\n\n", 'plain')
-        msg.attach(top_20_words)
+        # wordcloud_img.add_header('Content-Disposition', 'attachment', filename=f'{typ}_wordcloud.png')
+        # msg.attach(wordcloud_img)
+        if data['top']!={}:
+            top20 = ",".join([k for k in data['top']])
+            top_20_words = MIMEText(f"Top 20 words: {top20} \n\n", 'plain')
+            msg.attach(top_20_words)
+        
         # lda_html = MIMEText(data['lda'], 'html')
         # msg.attach(lda_html)
 
