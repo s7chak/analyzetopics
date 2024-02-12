@@ -202,16 +202,19 @@ def email_out(result):
 
 def topic_checks(data, field):
     df = copy.deepcopy(data)
-    clean_text = ' '.join([term for sublist in df[field].tolist() for term in sublist])
-    print(str(clean_text.split(' ')[:10]))
-    wc = generate_wordcloud(clean_text)
+    wc = generate_wordcloud(df, field)
     top_20_terms = find_top20words(df, field)
     # lda = do_lda_html(df)
     lda = None
     return wc, top_20_terms, lda
 
 
-def generate_wordcloud(text):
+def generate_wordcloud(df, field):
+    try:
+        df[field] = df[field].apply(ast.literal_eval)
+    except:
+        return None
+    text = ' '.join([term for sublist in df[field].tolist() for term in sublist])
     wordcloud = WordCloud(width=1200, height=900, background_color='white').generate(text)
     img_bytes_io = BytesIO()
     wordcloud.to_image().save(img_bytes_io, format='PNG')
