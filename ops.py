@@ -25,6 +25,7 @@ from wordcloud import WordCloud
 # nltk.download('punkt')
 # nltk.download('stopwords')
 today_date = dt.today().strftime('%m-%d-%Y')
+quickclean = ['you','will','say','said','are','has','cnet','new']
 
 def analyze_stories(types, bucket_name):
     result = {}
@@ -212,7 +213,7 @@ def generate_wordcloud(data, field):
         df[field] = df[field].apply(ast.literal_eval)
     except:
         return None
-    text = ' '.join([term for sublist in df[field].tolist() for term in sublist])
+    text = ' '.join([term for sublist in df[field].tolist() for term in sublist if term not in quickclean])
     wordcloud = WordCloud(width=1200, height=900, background_color='white').generate(text)
     img_bytes_io = BytesIO()
     wordcloud.to_image().save(img_bytes_io, format='PNG')
@@ -225,8 +226,7 @@ def find_top20words(data, field):
         df[field] = df[field].apply(ast.literal_eval)
     except:
         return {}
-    all_terms = [term for sublist in df[field].tolist() for term in sublist]
-    print(all_terms[:10])
+    all_terms = [term for sublist in df[field].tolist() for term in sublist if term not in quickclean]
     term_counts = Counter(all_terms)
     top_20_terms = dict(sorted(term_counts.items(), key=lambda item: item[1], reverse=True)[:20])
     return top_20_terms
