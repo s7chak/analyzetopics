@@ -124,17 +124,17 @@ def create_email_body(result):
         </body>
         </html>
         '''
-        msg.attach(MIMEText(html_content, 'html'))
         wordcloud_img = MIMEImage(data['wc'])
         wordcloud_img.add_header('Content-ID', '<wordcloud_image>')
         wordcloud_img.add_header('Content-Disposition', 'inline', filename=f'{typ}_wordcloud.png')
         msg.attach(wordcloud_img)
-        # wordcloud_img.add_header('Content-Disposition', 'attachment', filename=f'{typ}_wordcloud.png')
-        # msg.attach(wordcloud_img)
-        if data['top']!={}:
+        msg.attach(MIMEText(html_content, 'html'))
+        if len(list(data['top'].keys())) > 0:
             top20 = ",".join([k for k in data['top']])
             top_20_words = MIMEText(f"Top 20 words: {top20} \n\n", 'plain')
             msg.attach(top_20_words)
+        else:
+            logging.error("Top 20 words not found")
         
         # lda_html = MIMEText(data['lda'], 'html')
         # msg.attach(lda_html)
