@@ -1,0 +1,31 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <value>
+          <list size="18">
+            <item index="0" class="java.lang.String" itemvalue="statsmodels" />
+            <item index="1" class="java.lang.String" itemvalue="plotly" />
+            <item index="2" class="java.lang.String" itemvalue="requests" />
+            <item index="3" class="java.lang.String" itemvalue="pandas" />
+            <item index="4" class="java.lang.String" itemvalue="yfinance" />
+            <item index="5" class="java.lang.String" itemvalue="tsmoothie" />
+            <item index="6" class="java.lang.String" itemvalue="cvxpy" />
+            <item index="7" class="java.lang.String" itemvalue="scikit-learn" />
+            <item index="8" class="java.lang.String" itemvalue="nltk" />
+            <item index="9" class="java.lang.String" itemvalue="flask-session" />
+            <item index="10" class="java.lang.String" itemvalue="matplotlib" />
+            <item index="11" class="java.lang.String" itemvalue="flask" />
+            <item index="12" class="java.lang.String" itemvalue="feedparser" />
+            <item index="13" class="java.lang.String" itemvalue="genesis" />
+            <item index="14" class="java.lang.String" itemvalue="google-cloud-storage" />
+            <item index="15" class="java.lang.String" itemvalue="functions-framework" />
+            <item index="16" class="java.lang.String" itemvalue="gcsfs" />
+            <item index="17" class="java.lang.String" itemvalue="appengine-python-standard" />
+          </list>
+        </value>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

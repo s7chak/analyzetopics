@@ -25,7 +25,7 @@ from wordcloud import WordCloud
 # nltk.download('punkt')
 # nltk.download('stopwords')
 today_date = dt.today().strftime('%m-%d-%Y')
-quickclean = ['you','will','say','said','are','has','cnet','new','says','u','bloomberg','best', 'source']
+quickclean = ['you','will','say','said','are','has','cnet','new','says','u','bloomberg','best', 'source', 'year', 'people', 'story']
 
 def analyze_stories(types, bucket_name):
     result = {}
@@ -216,6 +216,7 @@ def topic_checks(data, field):
     # lda = do_lda_html(df)
     lda = None
     size = data.shape[1]
+    print(str(size))
     return wc, top_20_terms, lda, size
 
 
