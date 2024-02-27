@@ -89,6 +89,7 @@ def gcp_csv_to_df(bucket_name, source_file_name):
 
 
 from google.cloud import storage
+period_str = ''
 def read_files(bucket_name, type_):
     client = storage.Client()
     current_date = dt.utcnow()
@@ -96,6 +97,8 @@ def read_files(bucket_name, type_):
     blobs = client.list_blobs(bucket_name, prefix=f'{type_}/')
     relevant_files = []
     dfs = []
+    global period_str
+    period_str = one_month_ago.strftime("%b %d") + " to " + current_date.strftime("%b %d")
     for blob in blobs:
         logging.info(blob.name)
         file_name = blob.name.split('/')[-1]
@@ -118,15 +121,17 @@ def read_files(bucket_name, type_):
     if any(['Processed' in x for x in df.columns]):
         df['PText'] = df['PText'].fillna(df['Processed_Text'])
 
-    return df, relevant_files
+    return df, relevant_files, period_str
 
 
 def create_email_body(result):
     print('Building report')
     # Create a MIME multipart message
     msg = MIMEMultipart()
+    global period_str
     html_content = f'''<h1>Weekly Topicverse</h1>
-                        <h2>{today_date}</h2>'''
+                        <h2>{today_date}</h2>
+                        <h3>Context Period: {period_str}</h3>'''
     msg.attach(MIMEText(html_content, 'html'))
     for typ, data in result.items():
         if 'wc' in data and data['wc'] is not None:
