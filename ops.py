@@ -25,7 +25,7 @@ from wordcloud import WordCloud
 # nltk.download('punkt')
 # nltk.download('stopwords')
 today_date = dt.today().strftime('%m-%d-%Y')
-quickclean = ['you','will','say','said','are','has','cnet','new','says','u','bloomberg','best', 'source', 'year', 'people', 'story', 'stock']
+quickclean = ['how','you','will','say','said','are','has','cnet','new','says','u','bloomberg','best', 'source', 'year', 'people', 'story', 'stock']
 
 def analyze_stories(types, bucket_name):
     result = {}
@@ -92,7 +92,7 @@ from google.cloud import storage
 def read_files(bucket_name, type_):
     client = storage.Client()
     current_date = dt.utcnow()
-    one_month_ago = current_date - timedelta(days=90)
+    one_month_ago = current_date - timedelta(days=30)
     blobs = client.list_blobs(bucket_name, prefix=f'{type_}/')
     relevant_files = []
     dfs = []
@@ -217,7 +217,7 @@ def topic_checks(data, field):
     top_20_terms = find_top20words(data, field)
     # lda = do_lda_html(df)
     lda = None
-    size = data.shape[1]
+    size = data.shape[0]
     print(str(size))
     return wc, top_20_terms, lda, size
 
