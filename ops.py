@@ -104,6 +104,7 @@ def read_files(bucket_name, type_):
         try:
             file_date = dt.strptime(file_date_str, '%Y%m%d')
             if one_month_ago <= file_date <= current_date:
+                print(file_name, ': Relevant')
                 relevant_files.append(file_name)
                 file_data = blob.download_as_bytes()
                 df_ = pd.read_csv(io.BytesIO(file_data))
@@ -113,6 +114,7 @@ def read_files(bucket_name, type_):
             continue
             # logging.error('File read error: ' +file_date_str + type_ + '\n' +str(sys.exc_info()))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
+    print(str(df.shape), ': Size')
     if any(['Processed' in x for x in df.columns]):
         df['PText'] = df['PText'].fillna(df['Processed_Text'])
 
