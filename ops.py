@@ -103,7 +103,6 @@ def read_files(bucket_name, type_):
         logging.info(blob.name)
         file_name = blob.name.split('/')[-1]
         file_date_str = file_name.split('.')[0]
-        print(file_name)
         try:
             file_date = dt.strptime(file_date_str, '%Y%m%d')
             if one_month_ago <= file_date <= current_date:
@@ -117,11 +116,11 @@ def read_files(bucket_name, type_):
             continue
             # logging.error('File read error: ' +file_date_str + type_ + '\n' +str(sys.exc_info()))
     df = pd.concat(dfs, axis=0) if len(dfs) else None
-    logging.info(str(df.shape)+':: Size')
+    logging.info("Size:: " + str(df.shape)+' :: '+type_)
     if any(['Processed' in x for x in df.columns]):
         df['PText'] = df['PText'].fillna(df['Processed_Text'])
 
-    return df, relevant_files, period_str
+    return df, relevant_files
 
 
 def create_email_body(result):
